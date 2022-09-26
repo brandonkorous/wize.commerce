@@ -1,0 +1,106 @@
+# Deploy to Azure Kubernetes Service
+# Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+- main
+
+resources:
+- repo: self
+
+variables:
+- group: services-primary-variables
+- name: imageRepository
+  value: 'wizecommerceodata'
+- name: dockerfilePath
+  value: '**/wize.commerce.odata/Dockerfile'
+- name: tag
+  value: '$(Build.BuildId)'
+- name: vmImageName
+  value: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(DockerRegistryServiceConnection)
+        buildContext: .
+        tags: |
+          $(tag)
+          
+    - upload: eng
+      artifact: eng
+
+- stage: DeployDevelopment
+  displayName: Deploy Development
+  dependsOn: Build
+  jobs:
+  - deployment: Deploy
+    displayName: Deploy
+    pool:
+      vmImage: $(vmImageName)
+    environment: 'services-primary.development'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: KubernetesManifest@0
+            displayName: Create secret
+            inputs: 
+              action: createSecret
+              secretType: generic
+              secretName: connectionstrings-commerce-secrets
+              secretArguments: --from-literal=ConnectionStrings_TenantsContext="$(ConnectionStrings:TenantsContext)" --from-literal=ConnectionStrings_WizeWorksContext="$(ConnectionStrings:WizeWorksContext)" --from-literal=ConnectionStrings_ApplicationInsights="$(ConnectionStrings:ApplicationInsights)" --from-literal=ConnectionStrings_Sentry="$(ConnectionStrings:Sentry)"
+              kubernetesServiceConnection: $(KubernetesServiceConnection)
+              namespace: development
+          - task: KubernetesManifest@0
+            displayName: Create secret
+            inputs: 
+              action: createSecret
+              secretType: generic
+              secretName: authentication-commerce-secrets
+              secretArguments: |
+                --from-literal=JwtAuthentication_ValidAudience="$(JwtAuthentication:ValidAudience)" --from-literal=JwtAuthentication_ValidIssuer="$(JwtAuthentication:ValidIssuer)"
+              kubernetesServiceConnection: $(KubernetesServiceConnection)
+              namespace: development
+          - task: KubernetesManifest@0
+            displayName: Create secret
+            inputs: 
+              action: createSecret
+              secretType: generic
+              secretName: auth0-commerce-secrets
+              secretArguments: --from-literal=Auth0_Authority="$(Auth0:Authority)" --from-literal=Auth0_ClientSecret="$(Auth0:ClientSecret)" --from-literal=Auth0_ClientId="$(Auth0:ClientId)" --from-literal=Auth0_Audience="$(Auth0:Audience)"
+              kubernetesServiceConnection: $(KubernetesServiceConnection)
+              namespace: development
+          - task: KubernetesManifest@0
+            displayName: Create imagePullSecret
+            inputs:
+              action: 'createSecret'
+              kubernetesServiceConnection: $(KubernetesServiceConnection)
+              namespace: 'development'
+              secretType: 'dockerRegistry'
+              secretName: '$(ImagePullSecret)'
+              dockerRegistryEndpoint: '$(DockerRegistryServiceConnection)'
+              
+          - task: KubernetesManifest@0
+            displayName: Deploy to Kubernetes cluster
+            inputs:
+              action: 'deploy'
+              kubernetesServiceConnection: $(KubernetesServiceConnection)
+              namespace: 'development'
+              manifests: |
+                $(Pipeline.Workspace)/eng/development/deployment.odata.yml
+                $(Pipeline.Workspace)/eng/development/service.odata.yml
+              containers: '$(ContainerRegistry)/$(imageRepository):$(tag)'
+              imagePullSecrets: '$(ImagePullSecret)'

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <UserSecretsId>64817b57-5d63-44ae-8c1e-6a31b1d9f80d</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/323f07f8-930b-411b-a725-b5910fc17bc5/resourcegroups/rg-kube-primary-wu2/providers/Microsoft.Insights/components/wize.commerce.odata</ApplicationInsightsResourceId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.3" NoWarn="NU1605" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OData" Version="7.5.15" />
+    <PackageReference Include="Microsoft.AspNetCore.OData.Versioning" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OData.Versioning.ApiExplorer" Version="5.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.21.0" />
+    <PackageReference Include="Microsoft.OData.Core" Version="7.11.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+    <PackageReference Include="Sentry.AspNetCore" Version="3.19.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\wize.commerce.data\wize.commerce.data.csproj" />
+  </ItemGroup>
+
+</Project>
