@@ -26,7 +26,7 @@ namespace wize.commerce.odata.ModelConfigurations
         private EntityTypeConfiguration<Category> BuildDefault(ODataModelBuilder bulider)
         {
             var model = bulider.EntitySet<Category>("Categories").EntityType;
-            model.HasKey(m => m.CategoryId);
+            //model.HasKey(m => m.CategoryId);
             return model;
         }
 

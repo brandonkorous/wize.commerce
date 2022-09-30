@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Sentry;
 using System;
 using System.Linq;
 using wize.commerce.data;
@@ -14,15 +15,14 @@ using wize.common.tenancy.Interfaces;
 
 namespace wize.commerce.odata.V1
 {
+    [Authorize]
     [ApiVersion("1.0")]
     [ODataRoutePrefix("[controller]")]
-    [Authorize]
     public abstract class BaseODataController<TKey, TModel> : ODataController where TModel : class
     {
         private readonly WizeContext _context;
         private readonly ITenantProvider _tenantProvider;
         private readonly ILogger<BaseODataController<TKey, TModel>> _logger;
-
         public BaseODataController(ILogger<BaseODataController<TKey, TModel>> logger, IActionDescriptorCollectionProvider actionProvider, WizeContext context, ITenantProvider tenantProvider)
         {
             _logger = logger;
@@ -35,6 +35,7 @@ namespace wize.commerce.odata.V1
         /// This method will return the requested Dataset.
         /// </summary>
         /// <returns>IQueryable of requested type.</returns>
+        [Authorize("list:commerce")]
         [ODataRoute]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -45,7 +46,8 @@ namespace wize.commerce.odata.V1
             {
                 Guid? tenantId = _tenantProvider.GetTenantId();
                 return Ok(_context.Set<TModel>().Where(a => EF.Property<Guid>(a, "TenantId") == tenantId.Value));
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error: Get():{0}", typeof(TModel).Name);
                 return new StatusCodeResult(500);
@@ -58,13 +60,15 @@ namespace wize.commerce.odata.V1
         /// </summary>
         /// <param name="id">Key value</param>
         /// <returns>Data model</returns>
+        [Authorize("list:commerce")]
         [ODataRoute("({id})")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public virtual IActionResult Get(TKey id)
         {
-            try { 
+            try
+            {
                 //_context.Set<TModel>().Single(m => m.)
                 Guid? tenantId = _tenantProvider.GetTenantId();
                 var model = _context.Find<TModel>(id);
@@ -75,7 +79,8 @@ namespace wize.commerce.odata.V1
                     return NotFound();
                 }
                 return Ok(model);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error: Get {0}", typeof(TModel).Name);
                 return new StatusCodeResult(500);
@@ -88,13 +93,15 @@ namespace wize.commerce.odata.V1
         /// </summary>
         /// <param name="model">Data model</param>
         /// <returns>Data model</returns>
+        [Authorize("add:commerce")]
         [ODataRoute]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public virtual IActionResult Post([FromBody] TModel model)
         {
-            try { 
+            try
+            {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
@@ -117,7 +124,7 @@ namespace wize.commerce.odata.V1
         /// <param name="id">Key value</param>
         /// <param name="delta">Delta changeset</param>
         /// <returns>Data model</returns>
-        /// 
+        [Authorize("update:commerce")]
         [HttpPatch]
         [ODataRoute("({id})")]
         [Produces("application/json")]
@@ -127,7 +134,8 @@ namespace wize.commerce.odata.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public virtual IActionResult Patch(TKey id, Delta<TModel> delta)
         {
-            try { 
+            try
+            {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
@@ -157,7 +165,7 @@ namespace wize.commerce.odata.V1
         /// <param name="id">Key value</param>
         /// <param name="model">Data model</param>
         /// <returns>Data model</returns>
-        ///
+        [Authorize("update:commerce")]
         [HttpPut]
         [ODataRoute("({id})")]
         [Produces("application/json")]
@@ -167,12 +175,17 @@ namespace wize.commerce.odata.V1
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public virtual IActionResult Put(TKey id, [FromBody] TModel model)
         {
-            try { 
+            SentrySdk.ConfigureScope(scope =>
+            {
+                scope.User = new Sentry.User { Username = User.Identity.Name };
+            });
+            try
+            {
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
                 var origModel = _context.Find<TModel>(id);
-                    
+
                 if (origModel == default)
                 {
                     return NotFound();
@@ -197,12 +210,14 @@ namespace wize.commerce.odata.V1
         /// </summary>
         /// <param name="id">Key value</param>
         /// <returns></returns>
+        [Authorize("delete:commerce")]
         [ODataRoute("({id})")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public virtual IActionResult Delete(TKey id)
         {
-            try { 
+            try
+            {
                 var model = _context.Find<TModel>(id);
                 //if (EF.Property<Guid>(model, "TenantId") == _tenantProvider.GetTenantId())
                 //    return BadRequest();

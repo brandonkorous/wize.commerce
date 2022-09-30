@@ -6,7 +6,7 @@
     "appInsights1": {
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Insights/components/wize.commerce.odata",
       "type": "appInsights.azure",
-      "connectionId": "ConnectionStrings_ApplicationInsights",
+      "connectionId": "APPINSIGHTS_CONNECTIONSTRING",
       "secretStore": "LocalSecretsFile"
     }
   }

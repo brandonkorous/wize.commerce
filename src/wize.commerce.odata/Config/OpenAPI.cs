@@ -20,9 +20,7 @@ namespace wize.commerce.odata.Config
                 //options.ResolveConflictingActions(a => a.First());
                 options.OperationFilter<OpenAPIParameters>(); ;
                 options.IgnoreObsoleteProperties();
-                options.CustomSchemaIds(s =>
-                s.FullName
-                );
+                options.CustomSchemaIds(s => s.FullName);
             });
 
             return services;

@@ -11,9 +11,9 @@ namespace wize.commerce.odata.Config
     {
         public static IServiceCollection AddVersioning(this IServiceCollection services)
         {
-            services.AddApiVersioning(Base64FormattingOptions =>
+            services.AddApiVersioning(options =>
             {
-                Base64FormattingOptions.ReportApiVersions = true;
+                options.ReportApiVersions = true;
             });
 
             services.AddVersionedApiExplorer(options =>
