@@ -121,7 +121,6 @@ namespace wize.commerce.data.v1.Models
         public string MetaKeywords { get; set; }
         public string MetaDescription { get; set; }
 
-        [ForeignKey("InventoryId")]
         public Inventory Inventory { get; set; }
 
         public virtual List<ProductCategory> Categories { get; set; }

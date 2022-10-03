@@ -12,14 +12,12 @@ namespace wize.commerce.data.v1.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int InventoryId { get; set; }
-        public int ProductId { get; set; }
         public int Quantity { get; set; }
         //[DefaultValue(-1)]
         public int Threshhold { get; set; }
         public int MinOrderQuantity { get; set; }
         public int MaxOrderQuantity { get; set; }
         public string OutOfStockNotice { get; set; }
-        [ForeignKey("ProductId")]
         public Product Product { get; set; }
     }
 }

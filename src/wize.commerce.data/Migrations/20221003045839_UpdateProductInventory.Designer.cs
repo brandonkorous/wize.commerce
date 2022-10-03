@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using wize.commerce.data;
 
 namespace wize.commerce.data.Migrations
 {
     [DbContext(typeof(WizeContext))]
-    partial class CommerceContextModelSnapshot : ModelSnapshot
+    [Migration("20221003045839_UpdateProductInventory")]
+    partial class UpdateProductInventory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
