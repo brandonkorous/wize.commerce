@@ -65,6 +65,7 @@ namespace wize.commerce.odata.V1
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [EnableQuery(AllowedQueryOptions = AllowedQueryOptions.All)]
         public virtual IActionResult Get(TKey id)
         {
             try
