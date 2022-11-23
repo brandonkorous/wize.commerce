@@ -73,6 +73,9 @@ namespace wize.commerce.odata.V1
                 //_context.Set<TModel>().Single(m => m.)
                 Guid? tenantId = _tenantProvider.GetTenantId();
                 var model = _context.Find<TModel>(id);
+                var modelTenantId = _context.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
+                if (!tenantId.HasValue || modelTenantId != tenantId.Value)
+                    model = null;
 
                 if (model == null)
                 {

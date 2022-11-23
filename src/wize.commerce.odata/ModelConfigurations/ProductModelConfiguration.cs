@@ -27,6 +27,7 @@ namespace wize.commerce.odata.ModelConfigurations
         {
             var model = builder.EntitySet<Product>("Products").EntityType;
             model.HasKey(m => m.ProductId);
+            
             return model;
         }
 

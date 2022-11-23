@@ -69,71 +69,71 @@ namespace wize.commerce.data
             base.OnModelCreating(modelBuilder);
         }
 
-        public override TEntity Find<TEntity>(params object[] keyValues)
-        {
-            var model = base.Find<TEntity>(keyValues);
-            var tenantId = _tenantProvider.GetTenantId();
-            var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
-            if (!tenantId.HasValue || modelTenantId != tenantId.Value)
-                return default;
+        //public override TEntity Find<TEntity>(params object[] keyValues)
+        //{
+        //    var model = base.Find<TEntity>(keyValues);
+        //    var tenantId = _tenantProvider.GetTenantId();
+        //    var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
+        //    if (!tenantId.HasValue || modelTenantId != tenantId.Value)
+        //        return default;
 
-            return model;
-        }
+        //    return model;
+        //}
 
-        public override object Find(Type entityType, params object[] keyValues)
-        {
-            var model = base.Find(entityType, keyValues);
-            var tenantId = _tenantProvider.GetTenantId();
-            var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
-            if (!tenantId.HasValue || modelTenantId != tenantId.Value)
-                return default;
+        //public override object Find(Type entityType, params object[] keyValues)
+        //{
+        //    var model = base.Find(entityType, keyValues);
+        //    var tenantId = _tenantProvider.GetTenantId();
+        //    var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
+        //    if (!tenantId.HasValue || modelTenantId != tenantId.Value)
+        //        return default;
 
-            return model;
-        }
+        //    return model;
+        //}
 
-        public override ValueTask<object> FindAsync(Type entityType, params object[] keyValues)
-        {
-            var model = base.FindAsync(entityType, keyValues);
-            var tenantId = _tenantProvider.GetTenantId();
-            var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
-            if (!tenantId.HasValue || modelTenantId != tenantId.Value)
-                return default;
+        //public override ValueTask<object> FindAsync(Type entityType, params object[] keyValues)
+        //{
+        //    var model = base.FindAsync(entityType, keyValues);
+        //    var tenantId = _tenantProvider.GetTenantId();
+        //    var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
+        //    if (!tenantId.HasValue || modelTenantId != tenantId.Value)
+        //        return default;
 
-            return model;
-        }
+        //    return model;
+        //}
 
-        public override ValueTask<TEntity> FindAsync<TEntity>(params object[] keyValues)
-        {
-            var model = base.FindAsync<TEntity>(keyValues);
-            var tenantId = _tenantProvider.GetTenantId();
-            var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
-            if (!tenantId.HasValue || modelTenantId != tenantId.Value)
-                return default;
+        //public override ValueTask<TEntity> FindAsync<TEntity>(params object[] keyValues)
+        //{
+        //    var model = base.FindAsync<TEntity>(keyValues);
+        //    var tenantId = _tenantProvider.GetTenantId();
+        //    var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
+        //    if (!tenantId.HasValue || modelTenantId != tenantId.Value)
+        //        return default;
 
-            return model;
-        }
+        //    return model;
+        //}
 
-        public override ValueTask<TEntity> FindAsync<TEntity>(object[] keyValues, CancellationToken cancellationToken)
-        {
-            var model = base.FindAsync<TEntity>(keyValues, cancellationToken);
-            var tenantId = _tenantProvider.GetTenantId();
-            var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
-            if (!tenantId.HasValue || modelTenantId != tenantId.Value)
-                return default;
+        //public override ValueTask<TEntity> FindAsync<TEntity>(object[] keyValues, CancellationToken cancellationToken)
+        //{
+        //    var model = base.FindAsync<TEntity>(keyValues, cancellationToken);
+        //    var tenantId = _tenantProvider.GetTenantId();
+        //    var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
+        //    if (!tenantId.HasValue || modelTenantId != tenantId.Value)
+        //        return default;
 
-            return model;
-        }
+        //    return model;
+        //}
 
-        public override ValueTask<object> FindAsync(Type entityType, object[] keyValues, CancellationToken cancellationToken)
-        {
-            var model = base.FindAsync(entityType, keyValues, cancellationToken);
-            var tenantId = _tenantProvider.GetTenantId();
-            var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
-            if (!tenantId.HasValue || modelTenantId != tenantId.Value)
-                return default;
+        //public override ValueTask<object> FindAsync(Type entityType, object[] keyValues, CancellationToken cancellationToken)
+        //{
+        //    var model = base.FindAsync(entityType, keyValues, cancellationToken);
+        //    var tenantId = _tenantProvider.GetTenantId();
+        //    var modelTenantId = base.Entry(model).CurrentValues.GetValue<Guid>("TenantId");
+        //    if (!tenantId.HasValue || modelTenantId != tenantId.Value)
+        //        return default;
 
-            return model;
-        }
+        //    return model;
+        //}
 
         public override int SaveChanges()
         {
